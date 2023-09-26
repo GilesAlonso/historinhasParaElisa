@@ -43,15 +43,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
     populateVoiceList();
 
-    function textToSpeech(text, voiceName) {
-        let utterance = new SpeechSynthesisUtterance(text);
-        for (let voice of synth.getVoices()) {
-            if (voice.name === voiceName) {
-                utterance.voice = voice;
+function textToSpeech(element, voiceName) {
+    let textToRead = '';
+
+    function extractVisibleText(node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+            textToRead += node.textContent;
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+            const computedStyle = window.getComputedStyle(node);
+
+            if (computedStyle.display !== 'none' && computedStyle.visibility !== 'hidden') {
+                for (let child of node.childNodes) {
+                    extractVisibleText(child);
+                }
             }
         }
-        synth.speak(utterance);
     }
+
+    extractVisibleText(element);
+
+    let utterance = new SpeechSynthesisUtterance(textToRead.trim());
+    for (let voice of synth.getVoices()) {
+        if (voice.name === voiceName) {
+            utterance.voice = voice;
+        }
+    }
+    synth.speak(utterance);
+}
 
     ttsButton.addEventListener('click', () => {
         if (!synth.speaking) {
