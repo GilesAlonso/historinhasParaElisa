@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const nextButtons = document.querySelectorAll('#nextButton, #nextButton2');
     const prevButtons = document.querySelectorAll('#prevButton, #prevButton2');
     const ttsButton = document.getElementById('ttsButton');
-    const voiceList = document.getElementById('voiceList');
     const synth = window.speechSynthesis;
 
     let currentPageIndex = 0;
@@ -30,42 +29,25 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    function textToSpeech(voiceName) {
+    function textToSpeech() {
         if (!synth.speaking) {
-            const selectedVoice = voiceList.value;
+            const selectedVoice = 'Google português do Brasil'; // Defina a voz desejada aqui
             const currentSection = pages[currentPageIndex];
             const textToRead = getVisibleText(currentSection);
             
             let utterance = new SpeechSynthesisUtterance(textToRead.trim());
-            for (let voice of synth.getVoices()) {
-                if (voice.name === voiceName) {
+            synth.getVoices().forEach((voice) => {
+                if (voice.name === selectedVoice) {
                     utterance.voice = voice;
                 }
-            }
+            });
             synth.speak(utterance);
         }
     }
 
     ttsButton.addEventListener('click', () => {
-        textToSpeech(voiceList.value);
+        textToSpeech();
     });
-
-    let synthVoices = [];
-
-    function populateVoiceList() {
-        synthVoices = synth.getVoices();
-        voiceList.innerHTML = '';
-
-        for (let voice of synthVoices) {
-            let option = document.createElement('option');
-            option.textContent = `${voice.name} (${voice.lang})`;
-            option.value = voice.name;
-            voiceList.appendChild(option);
-        }
-    }
-
-    synth.addEventListener('voiceschanged', populateVoiceList);
-    populateVoiceList();
 
     showPage(currentPageIndex);
 
@@ -73,17 +55,13 @@ document.addEventListener('DOMContentLoaded', () => {
         let textToRead = '';
         
         function extractText(node) {
-            if (node.nodeType === Node.TEXT_NODE && !isButton(node.parentElement)) {
+            if (node.nodeType === Node.TEXT_NODE) {
                 textToRead += node.textContent;
-            } else if (node.nodeType === Node.ELEMENT_NODE) {
+            } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName !== 'BUTTON') {
                 for (let child of node.childNodes) {
                     extractText(child);
                 }
             }
-        }
-
-        function isButton(element) {
-            return element.tagName === 'BUTTON';
         }
         
         extractText(element);
