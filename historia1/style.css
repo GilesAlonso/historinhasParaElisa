@@ -37,6 +37,10 @@ main {
     margin: 20px auto;
 }
 
+.page:not(.visible) {
+    display: none;
+}
+
 .page img {
     max-width: 100%;
     height: auto;
