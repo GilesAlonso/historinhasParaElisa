@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!synth.speaking) {
             const selectedVoice = voiceList.value;
             const currentSection = pages[currentPageIndex];
-            const textToRead = currentSection.textContent;
+            const textToRead = getVisibleText(currentSection);
             
             let utterance = new SpeechSynthesisUtterance(textToRead.trim());
             for (let voice of synth.getVoices()) {
@@ -68,4 +68,25 @@ document.addEventListener('DOMContentLoaded', () => {
     populateVoiceList();
 
     showPage(currentPageIndex);
+
+    function getVisibleText(element) {
+        let textToRead = '';
+        
+        function extractText(node) {
+            if (node.nodeType === Node.TEXT_NODE && !isButton(node.parentElement)) {
+                textToRead += node.textContent;
+            } else if (node.nodeType === Node.ELEMENT_NODE) {
+                for (let child of node.childNodes) {
+                    extractText(child);
+                }
+            }
+        }
+
+        function isButton(element) {
+            return element.tagName === 'BUTTON';
+        }
+        
+        extractText(element);
+        return textToRead;
+    }
 });
