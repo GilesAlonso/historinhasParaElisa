@@ -4,9 +4,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const prevButtons = document.querySelectorAll('#prevButton, #prevButton2');
     const ttsButton = document.getElementById('ttsButton');
     const voiceList = document.getElementById('voiceList');
-    const ttsSections = document.querySelectorAll('[data-tts]');
+    const synth = window.speechSynthesis;
 
-    let synth = speechSynthesis;
+    let currentPageIndex = 0;
 
     function showPage(index) {
         pages[currentPageIndex].classList.remove('visible');
@@ -30,10 +30,33 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    function populateVoiceList() {
-        const voices = synth.getVoices();
+    function textToSpeech(voiceName) {
+        if (!synth.speaking) {
+            const selectedVoice = voiceList.value;
+            const currentSection = pages[currentPageIndex];
+            const textToRead = currentSection.textContent;
+            
+            let utterance = new SpeechSynthesisUtterance(textToRead.trim());
+            for (let voice of synth.getVoices()) {
+                if (voice.name === voiceName) {
+                    utterance.voice = voice;
+                }
+            }
+            synth.speak(utterance);
+        }
+    }
 
-        for (let voice of voices) {
+    ttsButton.addEventListener('click', () => {
+        textToSpeech(voiceList.value);
+    });
+
+    let synthVoices = [];
+
+    function populateVoiceList() {
+        synthVoices = synth.getVoices();
+        voiceList.innerHTML = '';
+
+        for (let voice of synthVoices) {
             let option = document.createElement('option');
             option.textContent = `${voice.name} (${voice.lang})`;
             option.value = voice.name;
@@ -41,48 +64,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    synth.addEventListener('voiceschanged', populateVoiceList);
     populateVoiceList();
 
-function textToSpeech(element, voiceName) {
-    let textToRead = '';
-
-    function extractVisibleText(node) {
-        if (node.nodeType === Node.TEXT_NODE) {
-            textToRead += node.textContent;
-        } else if (node.nodeType === Node.ELEMENT_NODE) {
-            const computedStyle = window.getComputedStyle(node);
-
-            if (computedStyle.display !== 'none' && computedStyle.visibility !== 'hidden') {
-                for (let child of node.childNodes) {
-                    extractVisibleText(child);
-                }
-            }
-        }
-    }
-
-    extractVisibleText(element);
-
-    let utterance = new SpeechSynthesisUtterance(textToRead.trim());
-    for (let voice of synth.getVoices()) {
-        if (voice.name === voiceName) {
-            utterance.voice = voice;
-        }
-    }
-    synth.speak(utterance);
-}
-
-    ttsButton.addEventListener('click', () => {
-        if (!synth.speaking) {
-            const selectedVoice = voiceList.value;
-            for (let section of ttsSections) {
-                const textToRead = section.textContent;
-                if (textToRead.trim() !== '') {
-                    textToSpeech(textToRead, selectedVoice);
-                }
-            }
-        }
-    });
-
-    let currentPageIndex = 0;
     showPage(currentPageIndex);
 });
