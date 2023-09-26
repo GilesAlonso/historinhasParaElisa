@@ -1,1 +1,39 @@
-//teste
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Os Três Porquinhos - Página Inicial</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Os Três Porquinhos</h1>
+        <button id="ttsButton">Ativar TTS</button>
+        <select id="voiceList"></select>
+    </header>
+    <main>
+        <section class="page visible" data-tts>
+            <img src="imagem1.jpg" alt="Casa de tijolos">
+            <h2>Capítulo 1: A Casa de Tijolos</h2>
+            <p>Era uma vez, três porquinhos que viviam juntos em uma floresta. O primeiro porquinho decidiu construir uma casa de tijolos.</p>
+            <button id="nextButton">Próxima Página</button>
+        </section>
+        <section class="page" data-tts>
+            <img src="imagem2.jpg" alt="Casa de palha">
+            <h2>Capítulo 2: A Casa de Palha</h2>
+            <p>O segundo porquinho construiu sua casa com palha. Ele achou que seria mais rápido e fácil.</p>
+            <button id="prevButton">Página Anterior</button>
+            <button id="nextButton2">Próxima Página</button>
+        </section>
+        <section class="page" data-tts>
+            <img src="imagem3.jpg" alt="Casa de madeira">
+            <h2>Capítulo 3: A Casa de Madeira</h2>
+            <p>O terceiro porquinho construiu sua casa com madeira. Ele queria que sua casa fosse segura e resistente.</p>
+            <button id="prevButton2">Página Anterior</button>
+            <a href="../index.html" class="back-button">Voltar para o Início</a>
+        </section>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>
