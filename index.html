@@ -10,70 +10,23 @@
     <header>
         <h1>Bem-vindo às Histórias Infantis</h1>
     </header>
-<main>
-    <section class="page visible" data-tts>
-        <img src="chapeuzinho.jpg" alt="Chapeuzinho Vermelho">
-        <h2>Capítulo 1: Chapeuzinho Vermelho</h2>
-        <p>Era uma vez, numa floresta encantada, uma menininha chamada Chapeuzinho Vermelho.</p>
-        <button id="nextButton">Próxima Página</button>
-    </section>
-    <section class="page" data-tts>
-        <img src="vovozinha.jpg" alt="Vovozinha">
-        <h2>Capítulo 2: A Vovozinha</h2>
-        <p>A Chapeuzinho Vermelho adorava sua vovozinha, que morava do outro lado da floresta. Ela sempre levava cestas com comidinhas deliciosas para sua vovó doente.</p>
-        <button id="prevButton">Página Anterior</button>
-        <button id="nextButton2">Próxima Página</button>
-    </section>
-    <section class="page" data-tts>
-        <img src="lobo.jpg" alt="Lobo Mau">
-        <h2>Capítulo 3: O Lobo Mau</h2>
-        <p>Enquanto Chapeuzinho Vermelho caminhava pela floresta, o Lobo Mau apareceu e perguntou onde ela estava indo.</p>
-        <button id="prevButton2">Página Anterior</button>
-        <button id="nextButton3">Próxima Página</button>
-    </section>
-    <section class="page" data-tts>
-        <img src="encontro.jpg" alt="Encontro com o Lobo">
-        <h2>Capítulo 4: O Encontro com o Lobo</h2>
-        <p>Chapeuzinho Vermelho contou ao Lobo Mau que estava indo visitar sua vovó doente. O Lobo Mau então teve uma ideia malvada.</p>
-        <button id="prevButton3">Página Anterior</button>
-        <button id="nextButton4">Próxima Página</button>
-    </section>
-    <section class="page" data-tts>
-        <img src="caminho.jpg" alt="Caminho para a casa da vovó">
-        <h2>Capítulo 5: O Caminho para a Casa da Vovó</h2>
-        <p>Chapeuzinho Vermelho seguiu seu caminho, mas o Lobo Mau foi mais rápido e chegou primeiro na casa da vovó.</p>
-        <button id="prevButton4">Página Anterior</button>
-        <button id="nextButton5">Próxima Página</button>
-    </section>
-    <section class="page" data-tts>
-        <img src="vovozinha_casa.jpg" alt="A casa da vovó">
-        <h2>Capítulo 6: A Casa da Vovó</h2>
-        <p>O Lobo Mau disfarçou-se de vovozinha e esperou Chapeuzinho Vermelho chegar.</p>
-        <button id="prevButton5">Página Anterior</button>
-        <button id="nextButton6">Próxima Página</button>
-    </section>
-    <section class="page" data-tts>
-        <img src="surpresa.jpg" alt="A surpresa do Lobo">
-        <h2>Capítulo 7: A Surpresa do Lobo</h2>
-        <p>Chapeuzinho Vermelho ficou surpresa ao ver a "vovozinha" tão diferente, mas o Lobo Mau revelou sua verdadeira identidade.</p>
-        <button id="prevButton6">Página Anterior</button>
-        <button id="nextButton7">Próxima Página</button>
-    </section>
-    <section class="page" data-tts>
-        <img src="salvacao.jpg" alt="A salvação pela caçador">
-        <h2>Capítulo 8: A Salvação pela Caçadora</h2>
-        <p>Antes que o Lobo Mau pudesse fazer mal à Chapeuzinho Vermelho, um caçador corajoso apareceu e a salvou.</p>
-        <button id="prevButton7">Página Anterior</button>
-        <button id="nextButton8">Próxima Página</button>
-    </section>
-    <section class="page" data-tts>
-        <img src="final_feliz.jpg" alt="Final Feliz">
-        <h2>Capítulo 9: Final Feliz</h2>
-        <p>Chapeuzinho Vermelho e sua vovó agradeceram ao caçador e, juntos, prepararam um delicioso lanche para comemorar seu final feliz.</p>
-        <button id="prevButton8">Página Anterior</button>
-        <a href="../index.html" class="back-button">Voltar para o Início</a>
-    </section>
-</main>
+    <main>
+        <div class="cards-container">
+            <!-- Card 1 -->
+            <div class="card" onclick="carregarHistoria('historia1/index.html')">
+                <img src="historia1/imagem1.jpg" alt="História 1">
+                <p>História 1</p>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="card" onclick="carregarHistoria('historia2/index.html')">
+                <img src="historia2/imagem2.jpg" alt="História 2">
+                <p>História 2</p>
+            </div>
+
+            <!-- Adicione mais cards conforme necessário -->
+        </div>
+    </main>
     <script src="script.js"></script>
 </body>
 </html>
