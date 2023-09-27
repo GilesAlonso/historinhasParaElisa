@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const pages = document.querySelectorAll('.page');
-    const nextButtons = document.querySelectorAll('#nextButton, #nextButton2');
-    const prevButtons = document.querySelectorAll('#prevButton, #prevButton2');
+    const nextButtons = document.querySelectorAll('#nextButton, #nextButton2, #nextButton3, #nextButton4, #nextButton5, #nextButton6, #nextButton7, #nextButton8');
+    const prevButtons = document.querySelectorAll('#prevButton, #prevButton2, #prevButton3, #prevButton4, #prevButton5, #prevButton6, #prevButton7, #prevButton8');
     const ttsButton = document.getElementById('ttsButton');
     const voiceList = document.getElementById('voiceList');
     const synth = window.speechSynthesis;
