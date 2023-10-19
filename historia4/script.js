@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
         function extractText(node, isFirstNodeInElement) {
             if (node.nodeType === Node.TEXT_NODE && !isButton(node.parentElement)) {
                 if (isFirstNodeInElement) {
-                    textToRead += '.\n';
+                    textToRead += '\n';
                 }
                 textToRead += node.textContent;
             } else if (node.nodeType === Node.ELEMENT_NODE) {
