@@ -58,10 +58,13 @@ Com seus olhos bem abertos, caçando um ratão.
     <select id="shape">
         <option value="rectangle">Rectangle</option>
         <option value="circle">Circle</option>
+        <option value="dot">Dot</option>
+        <option value="star">Star</option>
+        <option value="pentagon">Pentagon</option>
     </select>
 </div>
 <div>
-    <label for "mode">Mode:</label>
+    <label for="mode">Mode:</label>
     <select id="mode">
         <option value="draw">Draw</option>
         <option value="fill">Fill</option>
@@ -81,53 +84,102 @@ Com seus olhos bem abertos, caçando um ratão.
     const modeSelector = document.getElementById("mode");
     const colorSelector = document.getElementById("color");
     const clearButton = document.getElementById("clear");
-    let isDrawing = false;
+    
+    // Separate canvas for pre-defined shapes
+    const predefinedCanvas = document.createElement("canvas");
+    predefinedCanvas.width = canvas.width;
+    predefinedCanvas.height = canvas.height;
+    const predefinedContext = predefinedCanvas.getContext("2d");
 
-    canvas.addEventListener("mousedown", () => {
-        isDrawing = true;
-    });
-
-    canvas.addEventListener("mouseup", () => {
-        isDrawing = false;
-        context.closePath();
-    });
-
-    canvas.addEventListener("mousemove", draw);
-
+    canvas.addEventListener("click", draw);
+    
     clearButton.addEventListener("click", () => {
         context.clearRect(0, 0, canvas.width, canvas.height);
     });
-
+    
     function draw(e) {
-        if (!isDrawing) return;
-
         const shape = shapeSelector.value;
         const mode = modeSelector.value;
         const color = colorSelector.value;
-
+        const x = e.clientX - canvas.getBoundingClientRect().left;
+        const y = e.clientY - canvas.getBoundingClientRect().top;
+        
         context.strokeStyle = color;
         context.fillStyle = color;
         context.lineWidth = 2;
+        
+        switch (shape) {
+            case "rectangle":
+                context.beginPath();
+                context.rect(x - 25, y - 25, 50, 50);
+                break;
+            case "circle":
+                context.beginPath();
+                context.arc(x, y, 25, 0, 2 * Math.PI);
+                break;
+            case "dot":
+                context.beginPath();
+                context.arc(x, y, 2, 0, 2 * Math.PI);
+                break;
+            case "star":
+    const spikes = 5; // Number of spikes in the star
+    const outerRadius = 20;
+    const innerRadius = 10;
+    
+    context.beginPath();
+    for (let i = 0; i < spikes; i++) {
+        const angle = (Math.PI / spikes) * i;
+        const x = x + Math.cos(angle) * outerRadius;
+        const y = y + Math.sin(angle) * outerRadius;
+        context.lineTo(x, y);
+        
+        const nextAngle = angle + (Math.PI / spikes);
+        const nextX = x + Math.cos(nextAngle) * innerRadius;
+        const nextY = y + Math.sin(nextAngle) * innerRadius;
+        context.lineTo(nextX, nextY);
+    }
+    context.closePath();
+    break;
 
-        if (shape === "rectangle") {
-            context.beginPath();
-            context.rect(e.clientX - canvas.getBoundingClientRect().left, e.clientY - canvas.getBoundingClientRect().top, 50, 50);
-            if (mode === "draw") {
-                context.stroke();
-            } else if (mode === "fill") {
-                context.fill();
-            }
-        } else if (shape === "circle") {
-            context.beginPath();
-            context.arc(e.clientX - canvas.getBoundingClientRect().left, e.clientY - canvas.getBoundingClientRect().top, 25, 0, 2 * Math.PI);
-            if (mode === "draw") {
-                context.stroke();
-            } else if (mode === "fill") {
-                context.fill();
-            }
+            case "pentagon":
+    const sideLength = 30; // Length of each side
+    context.beginPath();
+    
+    for (let i = 0; i < 5; i++) {
+        const angle = (i * 2 * Math.PI) / 5;
+        const xVertex = x + sideLength * Math.cos(angle);
+        const yVertex = y + sideLength * Math.sin(angle);
+        
+        context.lineTo(xVertex, yVertex);
+    }
+    
+    context.closePath();
+    break;
+
+            default:
+                break;
         }
+        
+        if (mode === "draw") {
+            context.stroke();
+        } else if (mode === "fill") {
+            context.fill();
+        }
+        
+        // Draw pre-defined shapes on the separate canvas (not cleared with "Clear" button)
+        drawPredefinedShapes(predefinedContext);
+    }
+    
+    // Function to draw pre-defined shapes on a separate canvas
+    function drawPredefinedShapes(ctx) {
+        // Example: Draw pre-defined shapes on the separate canvas
+        ctx.fillStyle = "blue";
+        ctx.beginPath();
+        ctx.arc(100, 100, 20, 0, 2 * Math.PI);
+        ctx.fill();
     }
 </script>
+
 
 
 
