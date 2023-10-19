@@ -46,55 +46,62 @@ Com seus olhos bem abertos, caçando um ratão.
 
         
 <section class="page" data-tts>
-    <canvas id="canvas" width="400" height="400"></canvas>
+<canvas id="canvas" width="400" height="400" style="border:1px solid #000000;"></canvas>
+    <input type="color" id="colorPicker" value="#000000">
+    <button id="fillButton">Fill</button>
     <button id="clearButton">Clear</button>
     <script>
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
+        const colorPicker = document.getElementById('colorPicker');
+        const fillButton = document.getElementById('fillButton');
         const clearButton = document.getElementById('clearButton');
         let isDrawing = false;
 
-        // Define the square
-        const square = {
-            x: 100,
-            y: 100,
-            width: 100,
-            height: 100
-        };
+        // Create an array to store shapes
+        const shapes = [
+            { x: 100, y: 100, width: 100, height: 100, color: 'blue' },
+            { x: 200, y: 200, width: 80, height: 120, color: 'green' }
+            // Add more shapes here
+        ];
 
-        // Draw the square
-        function drawSquare() {
-            ctx.fillStyle = 'blue';
-            ctx.fillRect(square.x, square.y, square.width, square.height);
+        // Function to draw all shapes
+        function drawShapes() {
+            shapes.forEach(shape => {
+                ctx.fillStyle = shape.color;
+                ctx.fillRect(shape.x, shape.y, shape.width, shape.height);
+            });
         }
-        drawSquare();
+        drawShapes();
 
-        // Event listeners for mouse interaction
-        canvas.addEventListener('mousedown', (e) => {
-            isDrawing = true;
-            ctx.beginPath();
-            ctx.moveTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
-        });
+        // Event listener for mouse click to fill a shape
+        canvas.addEventListener('click', (e) => {
+            const mouseX = e.clientX - canvas.offsetLeft;
+            const mouseY = e.clientY - canvas.offsetTop;
 
-        canvas.addEventListener('mousemove', (e) => {
-            if (isDrawing) {
-                ctx.lineTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
-                ctx.stroke();
+            // Check if the click is inside any of the shapes
+            for (let i = shapes.length - 1; i >= 0; i--) {
+                const shape = shapes[i];
+                if (
+                    mouseX >= shape.x && mouseX <= shape.x + shape.width &&
+                    mouseY >= shape.y && mouseY <= shape.y + shape.height
+                ) {
+                    const selectedColor = colorPicker.value;
+                    shape.color = selectedColor;
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    drawShapes();
+                    break; // Exit the loop after filling one shape
+                }
             }
-        });
-
-        canvas.addEventListener('mouseup', () => {
-            isDrawing = false;
-        });
-
-        canvas.addEventListener('mouseleave', () => {
-            isDrawing = false;
         });
 
         // Clear the canvas
         clearButton.addEventListener('click', () => {
+            shapes.forEach(shape => {
+                shape.color = 'white'; // Reset all shapes to white (clear)
+            });
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            drawSquare();
+            drawShapes();
         });
     </script>
             <div class="button-container">
