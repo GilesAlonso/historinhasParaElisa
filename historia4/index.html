@@ -46,7 +46,7 @@ Com seus olhos bem abertos, caçando um ratão.
 
         
 <section class="page" data-tts>
-<canvas id="canvas" width="400" height="400" style="border:1px solid #000000;"></canvas>
+<canvas id="canvas" width="400" height="400"></canvas>
     <input type="color" id="colorPicker" value="#000000">
     <button id="fillButton">Fill</button>
     <button id="clearButton">Clear</button>
@@ -88,20 +88,38 @@ Com seus olhos bem abertos, caçando um ratão.
                 ) {
                     const selectedColor = colorPicker.value;
                     shape.color = selectedColor;
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    drawShapes();
+                    drawShapes(); // Redraw all shapes, including the filled one
                     break; // Exit the loop after filling one shape
                 }
             }
         });
 
+        // Event listeners for drawing
+        canvas.addEventListener('mousedown', (e) => {
+            isDrawing = true;
+            ctx.beginPath();
+            ctx.moveTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (isDrawing) {
+                ctx.lineTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+                ctx.stroke();
+            }
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            isDrawing = false;
+        });
+
+        canvas.addEventListener('mouseleave', () => {
+            isDrawing = false;
+        });
+
         // Clear the canvas
         clearButton.addEventListener('click', () => {
-            shapes.forEach(shape => {
-                shape.color = 'white'; // Reset all shapes to white (clear)
-            });
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            drawShapes();
+            drawShapes(); // Redraw all shapes after clearing
         });
     </script>
             <div class="button-container">
