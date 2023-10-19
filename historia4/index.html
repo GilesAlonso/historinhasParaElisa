@@ -98,29 +98,34 @@ Com seus olhos bem abertos, caçando um ratão.
     // Draw pre-defined shapes on the separate canvas initially
     drawPredefinedShapes(predefinedContext);
 
-    canvas.addEventListener("mousedown", (e) => {
-        isDrawing = true;
-        [lastX, lastY] = [e.clientX - canvas.getBoundingClientRect().left, e.clientY - canvas.getBoundingClientRect().top];
-    });
-
-    canvas.addEventListener("mouseup", () => {
-        isDrawing = false;
-        context.closePath();
-    });
-
+    canvas.addEventListener("mousedown", startDrawing);
+    canvas.addEventListener("mouseup", stopDrawing);
     canvas.addEventListener("mousemove", draw);
 
-    clearButton.addEventListener("click", () => {
-        context.clearRect(0, 0, canvas.width, canvas.height);
-        context.drawImage(predefinedCanvas, 0, 0);
-    });
+    canvas.addEventListener("touchstart", startDrawing);
+    canvas.addEventListener("touchend", stopDrawing);
+    canvas.addEventListener("touchmove", draw);
+
+    clearButton.addEventListener("click", clearCanvas);
+
+    function startDrawing(e) {
+        e.preventDefault();
+        isDrawing = true;
+        const [x, y] = getCoordinates(e);
+        [lastX, lastY] = [x, y];
+    }
+
+    function stopDrawing() {
+        isDrawing = false;
+        context.closePath();
+    }
 
     function draw(e) {
+        if (!isDrawing) return;
         const shape = shapeSelector.value;
         const mode = modeSelector.value;
         const color = colorSelector.value;
-        const x = e.clientX - canvas.getBoundingClientRect().left;
-        const y = e.clientY - canvas.getBoundingClientRect().top;
+        const [x, y] = getCoordinates(e);
 
         context.strokeStyle = color;
         context.fillStyle = color;
@@ -128,22 +133,16 @@ Com seus olhos bem abertos, caçando um ratão.
 
         switch (shape) {
             case "rectangle":
-                if (isDrawing) {
-                    context.beginPath();
-                    context.rect(x - 25, y - 25, 50, 50);
-                }
+                context.beginPath();
+                context.rect(x - 25, y - 25, 50, 50);
                 break;
             case "circle":
-                if (isDrawing) {
-                    context.beginPath();
-                    context.arc(x, y, 25, 0, 2 * Math.PI);
-                }
+                context.beginPath();
+                context.arc(x, y, 25, 0, 2 * Math.PI);
                 break;
             case "dot":
-                if (isDrawing) {
-                    context.beginPath();
-                    context.arc(x, y, 2, 0, 2 * Math.PI);
-                }
+                context.beginPath();
+                context.arc(x, y, 2, 0, 2 * Math.PI);
                 break;
             case "star":
                 // Draw a star shape here
@@ -154,7 +153,6 @@ Com seus olhos bem abertos, caçando um ratão.
                 // Example: context.beginPath(); ...; break;
                 break;
             case "pencil":
-                if (!isDrawing) return;
                 context.beginPath();
                 context.moveTo(lastX, lastY);
                 context.lineTo(x, y);
@@ -166,64 +164,80 @@ Com seus olhos bem abertos, caçando um ratão.
                 break;
         }
 
-        if (mode === "draw" && isDrawing) {
+        if (mode === "draw") {
             context.stroke();
-        } else if (mode === "fill" && isDrawing) {
+        } else if (mode === "fill") {
             context.fill();
         }
     }
 
-   // Function to draw pre-defined shapes on a separate canvas
-function drawPredefinedShapes(ctx) {
-    // Draw Mickey Mouse's face
-    const centerX = predefinedCanvas.width / 2;
-    const centerY = predefinedCanvas.height / 2;
-    const headRadius = 60;
-    const earRadius = 20;
-    const eyeRadius = 10;
-    const eyeOffset = 15;
-    const mouthWidth = 30;
-    const mouthHeight = 10;
+    function clearCanvas() {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.drawImage(predefinedCanvas, 0, 0);
+    }
 
-    // Head
-    ctx.fillStyle = "black";
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, headRadius, 0, 2 * Math.PI);
-    ctx.fill();
+    function getCoordinates(e) {
+        let x, y;
+        if (e.changedTouches) {
+            x = e.changedTouches[0].clientX - canvas.getBoundingClientRect().left;
+            y = e.changedTouches[0].clientY - canvas.getBoundingClientRect().top;
+        } else {
+            x = e.clientX - canvas.getBoundingClientRect().left;
+            y = e.clientY - canvas.getBoundingClientRect().top;
+        }
+        return [x, y];
+    }
 
-    // Ears
-    ctx.beginPath();
-    ctx.arc(centerX - headRadius * 0.7, centerY - headRadius * 0.7, earRadius, 0, 2 * Math.PI);
-    ctx.arc(centerX + headRadius * 0.7, centerY - headRadius * 0.7, earRadius, 0, 2 * Math.PI);
-    ctx.fill();
+    // Function to draw pre-defined shapes on a separate canvas
+    function drawPredefinedShapes(ctx) {
+        // Draw Mickey Mouse's face
+        const centerX = predefinedCanvas.width / 2;
+        const centerY = predefinedCanvas.height / 2;
+        const headRadius = 60;
+        const earRadius = 20;
+        const eyeRadius = 10;
+        const eyeOffset = 15;
+        const mouthWidth = 30;
+        const mouthHeight = 10;
 
-    // Eyes
-    ctx.fillStyle = "white";
-    ctx.beginPath();
-    ctx.arc(centerX - eyeOffset, centerY - eyeOffset, eyeRadius, 0, 2 * Math.PI);
-    ctx.arc(centerX + eyeOffset, centerY - eyeOffset, eyeRadius, 0, 2 * Math.PI);
-    ctx.fill();
+        // Head
+        ctx.fillStyle = "black";
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, headRadius, 0, 2 * Math.PI);
+        ctx.fill();
 
-    ctx.fillStyle = "black";
-    ctx.beginPath();
-    ctx.arc(centerX - eyeOffset, centerY - eyeOffset, eyeRadius / 2, 0, 2 * Math.PI);
-    ctx.arc(centerX + eyeOffset, centerY - eyeOffset, eyeRadius / 2, 0, 2 * Math.PI);
-    ctx.fill();
+        // Ears
+        ctx.beginPath();
+        ctx.arc(centerX - headRadius * 0.7, centerY - headRadius * 0.7, earRadius, 0, 2 * Math.PI);
+        ctx.arc(centerX + headRadius * 0.7, centerY - headRadius * 0.7, earRadius, 0, 2 * Math.PI);
+        ctx.fill();
 
-    // Mouth
-    ctx.beginPath();
-    ctx.arc(centerX, centerY + 10, mouthWidth, 0, Math.PI);
-    ctx.fill();
+        // Eyes
+        ctx.fillStyle = "white";
+        ctx.beginPath();
+        ctx.arc(centerX - eyeOffset, centerY - eyeOffset, eyeRadius, 0, 2 * Math.PI);
+        ctx.arc(centerX + eyeOffset, centerY - eyeOffset, eyeRadius, 0, 2 * Math.PI);
+        ctx.fill();
 
-    // Nose
-    ctx.fillStyle = "red";
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, 5, 0, 2 * Math.PI);
-    ctx.fill();
-}
+        ctx.fillStyle = "black";
+        ctx.beginPath();
+        ctx.arc(centerX - eyeOffset, centerY - eyeOffset, eyeRadius / 2, 0, 2 * Math.PI);
+        ctx.arc(centerX + eyeOffset, centerY - eyeOffset, eyeRadius / 2, 0, 2 * Math.PI);
+        ctx.fill();
 
+        // Mouth
+        ctx.beginPath();
+        ctx.arc(centerX, centerY + 10, mouthWidth, 0, Math.PI);
+        ctx.fill();
 
+        // Nose
+        ctx.fillStyle = "red";
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, 5, 0, 2 * Math.PI);
+        ctx.fill();
+    }
 </script>
+
 
 
 
