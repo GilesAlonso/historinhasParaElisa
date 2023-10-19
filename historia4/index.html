@@ -95,6 +95,9 @@ Com seus olhos bem abertos, caçando um ratão.
     predefinedCanvas.height = canvas.height;
     const predefinedContext = predefinedCanvas.getContext("2d");
 
+    // Draw pre-defined shapes on the separate canvas
+    drawPredefinedShapes(predefinedContext);
+
     canvas.addEventListener("mousedown", (e) => {
         isDrawing = true;
         [lastX, lastY] = [e.clientX - canvas.getBoundingClientRect().left, e.clientY - canvas.getBoundingClientRect().top];
@@ -109,7 +112,7 @@ Com seus olhos bem abertos, caçando um ratão.
 
     clearButton.addEventListener("click", () => {
         context.clearRect(0, 0, canvas.width, canvas.height);
-        drawPredefinedShapes(predefinedContext);
+        context.drawImage(predefinedCanvas, 0, 0);
     });
 
     function draw(e) {
@@ -168,9 +171,6 @@ Com seus olhos bem abertos, caçando um ratão.
         } else if (mode === "fill" && isDrawing) {
             context.fill();
         }
-
-        // Draw pre-defined shapes on the separate canvas
-        drawPredefinedShapes(predefinedContext);
     }
 
     // Function to draw pre-defined shapes on a separate canvas
@@ -182,6 +182,7 @@ Com seus olhos bem abertos, caçando um ratão.
         ctx.fill();
     }
 </script>
+
 
 
 
