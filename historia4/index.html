@@ -42,6 +42,67 @@ Com seus olhos bem abertos, caçando um ratão.
                 <button class="nextButton">Próxima Página <span class="arrow">&#8594;</span></button>
             </div>
         </section>
+
+
+        
+<section class="page" data-tts>
+    <canvas id="canvas" width="400" height="400"></canvas>
+    <button id="clearButton">Clear</button>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const clearButton = document.getElementById('clearButton');
+        let isDrawing = false;
+
+        // Define the square
+        const square = {
+            x: 100,
+            y: 100,
+            width: 100,
+            height: 100
+        };
+
+        // Draw the square
+        function drawSquare() {
+            ctx.fillStyle = 'blue';
+            ctx.fillRect(square.x, square.y, square.width, square.height);
+        }
+        drawSquare();
+
+        // Event listeners for mouse interaction
+        canvas.addEventListener('mousedown', (e) => {
+            isDrawing = true;
+            ctx.beginPath();
+            ctx.moveTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (isDrawing) {
+                ctx.lineTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+                ctx.stroke();
+            }
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            isDrawing = false;
+        });
+
+        canvas.addEventListener('mouseleave', () => {
+            isDrawing = false;
+        });
+
+        // Clear the canvas
+        clearButton.addEventListener('click', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawSquare();
+        });
+    </script>
+            <div class="button-container">
+                <button class="prevButton"><span class="arrow">&#8592;</span> Página Anterior</button>
+                <button class="nextButton">Próxima Página <span class="arrow">&#8594;</span></button>
+            </div>
+        </section>        
+        
 <section class="page" data-tts>
             <img src="https://i.imgur.com/GL67HpG.jpg" alt="Imagem">
             <p>Em seguida, o macaco veio pulando sem parar,
