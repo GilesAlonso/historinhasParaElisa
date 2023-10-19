@@ -46,17 +46,20 @@ Com seus olhos bem abertos, caçando um ratão.
 
         
 <section class="page" data-tts>
-<canvas id="canvas" width="400" height="400"></canvas>
+    <canvas id="canvas" width="400" height="400"></canvas>
     <input type="color" id="colorPicker" value="#000000">
-    <button id="fillButton">Fill</button>
+    <button id="fillButton" onclick="setMode('fill')">Fill</button>
+    <button id="drawButton" onclick="setMode('draw')">Draw</button>
     <button id="clearButton">Clear</button>
     <script>
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         const colorPicker = document.getElementById('colorPicker');
         const fillButton = document.getElementById('fillButton');
+        const drawButton = document.getElementById('drawButton');
         const clearButton = document.getElementById('clearButton');
         let isDrawing = false;
+        let mode = 'draw'; // Default mode is drawing
 
         // Create an array to store shapes
         const shapes = [
@@ -74,36 +77,38 @@ Com seus olhos bem abertos, caçando um ratão.
         }
         drawShapes();
 
-        // Event listener for mouse click to fill a shape
+        // Event listener for mouse click to fill a shape or draw
         canvas.addEventListener('click', (e) => {
             const mouseX = e.clientX - canvas.offsetLeft;
             const mouseY = e.clientY - canvas.offsetTop;
 
-            // Check if the click is inside any of the shapes
-            for (let i = shapes.length - 1; i >= 0; i--) {
-                const shape = shapes[i];
-                if (
-                    mouseX >= shape.x && mouseX <= shape.x + shape.width &&
-                    mouseY >= shape.y && mouseY <= shape.y + shape.height
-                ) {
-                    const selectedColor = colorPicker.value;
-                    shape.color = selectedColor;
-                    drawShapes(); // Redraw all shapes, including the filled one
-                    break; // Exit the loop after filling one shape
+            if (mode === 'fill') {
+                // Check if the click is inside any of the shapes
+                for (let i = shapes.length - 1; i >= 0; i--) {
+                    const shape = shapes[i];
+                    if (
+                        mouseX >= shape.x && mouseX <= shape.x + shape.width &&
+                        mouseY >= shape.y && mouseY <= shape.y + shape.height
+                    ) {
+                        const selectedColor = colorPicker.value;
+                        shape.color = selectedColor;
+                        drawShapes(); // Redraw all shapes, including the filled one
+                        break; // Exit the loop after filling one shape
+                    }
                 }
+            } else if (mode === 'draw') {
+                isDrawing = true;
+                ctx.beginPath();
+                ctx.moveTo(mouseX, mouseY);
             }
         });
 
-        // Event listeners for drawing
-        canvas.addEventListener('mousedown', (e) => {
-            isDrawing = true;
-            ctx.beginPath();
-            ctx.moveTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
-        });
-
+        // Event listener for drawing
         canvas.addEventListener('mousemove', (e) => {
-            if (isDrawing) {
-                ctx.lineTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+            if (isDrawing && mode === 'draw') {
+                const mouseX = e.clientX - canvas.offsetLeft;
+                const mouseY = e.clientY - canvas.offsetTop;
+                ctx.lineTo(mouseX, mouseY);
                 ctx.stroke();
             }
         });
@@ -112,15 +117,16 @@ Com seus olhos bem abertos, caçando um ratão.
             isDrawing = false;
         });
 
-        canvas.addEventListener('mouseleave', () => {
-            isDrawing = false;
-        });
-
         // Clear the canvas
         clearButton.addEventListener('click', () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawShapes(); // Redraw all shapes after clearing
         });
+
+        // Function to switch between fill and draw modes
+        function setMode(newMode) {
+            mode = newMode;
+        }
     </script>
             <div class="button-container">
                 <button class="prevButton"><span class="arrow">&#8592;</span> Página Anterior</button>
