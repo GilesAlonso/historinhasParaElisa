@@ -65,6 +65,10 @@ Com seus olhos bem abertos, caçando um ratão.
     </select>
 </div>
 <div>
+    <label for="size">Size:</label>
+    <input type="number" id="size" value="25">
+</div>
+<div>
     <label for="mode">Mode:</label>
     <select id="mode">
         <option value="draw">Draw</option>
@@ -82,6 +86,7 @@ Com seus olhos bem abertos, caçando um ratão.
     const canvas = document.getElementById("canvas");
     const context = canvas.getContext("2d");
     const shapeSelector = document.getElementById("shape");
+    const sizeSelector = document.getElementById("size");
     const modeSelector = document.getElementById("mode");
     const colorSelector = document.getElementById("color");
     const clearButton = document.getElementById("clear");
@@ -123,6 +128,7 @@ Com seus olhos bem abertos, caçando um ratão.
     function draw(e) {
         if (!isDrawing) return;
         const shape = shapeSelector.value;
+        const size = parseInt(sizeSelector.value, 10);
         const mode = modeSelector.value;
         const color = colorSelector.value;
         const [x, y] = getCoordinates(e);
@@ -134,15 +140,15 @@ Com seus olhos bem abertos, caçando um ratão.
         switch (shape) {
             case "rectangle":
                 context.beginPath();
-                context.rect(x - 25, y - 25, 50, 50);
+                context.rect(x - size / 2, y - size / 2, size, size);
                 break;
             case "circle":
                 context.beginPath();
-                context.arc(x, y, 25, 0, 2 * Math.PI);
+                context.arc(x, y, size / 2, 0, 2 * Math.PI);
                 break;
             case "dot":
                 context.beginPath();
-                context.arc(x, y, 2, 0, 2 * Math.PI);
+                context.arc(x, y, size / 10, 0, 2 * Math.PI);
                 break;
             case "star":
                 // Draw a star shape here
@@ -237,6 +243,7 @@ Com seus olhos bem abertos, caçando um ratão.
         ctx.fill();
     }
 </script>
+
 
 
 
