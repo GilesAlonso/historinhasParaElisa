@@ -173,14 +173,56 @@ Com seus olhos bem abertos, caçando um ratão.
         }
     }
 
-    // Function to draw pre-defined shapes on a separate canvas
-    function drawPredefinedShapes(ctx) {
-        // Example: Draw pre-defined shapes on the separate canvas
-        ctx.fillStyle = "green";
-        ctx.beginPath();
-        ctx.arc(100, 100, 20, 0, 2 * Math.PI);
-        ctx.fill();
-    }
+   // Function to draw pre-defined shapes on a separate canvas
+function drawPredefinedShapes(ctx) {
+    // Draw Mickey Mouse's face
+    const centerX = predefinedCanvas.width / 2;
+    const centerY = predefinedCanvas.height / 2;
+    const headRadius = 60;
+    const earRadius = 20;
+    const eyeRadius = 10;
+    const eyeOffset = 15;
+    const mouthWidth = 30;
+    const mouthHeight = 10;
+
+    // Head
+    ctx.fillStyle = "black";
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, headRadius, 0, 2 * Math.PI);
+    ctx.fill();
+
+    // Ears
+    ctx.beginPath();
+    ctx.arc(centerX - headRadius * 0.7, centerY - headRadius * 0.7, earRadius, 0, 2 * Math.PI);
+    ctx.arc(centerX + headRadius * 0.7, centerY - headRadius * 0.7, earRadius, 0, 2 * Math.PI);
+    ctx.fill();
+
+    // Eyes
+    ctx.fillStyle = "white";
+    ctx.beginPath();
+    ctx.arc(centerX - eyeOffset, centerY - eyeOffset, eyeRadius, 0, 2 * Math.PI);
+    ctx.arc(centerX + eyeOffset, centerY - eyeOffset, eyeRadius, 0, 2 * Math.PI);
+    ctx.fill();
+
+    ctx.fillStyle = "black";
+    ctx.beginPath();
+    ctx.arc(centerX - eyeOffset, centerY - eyeOffset, eyeRadius / 2, 0, 2 * Math.PI);
+    ctx.arc(centerX + eyeOffset, centerY - eyeOffset, eyeRadius / 2, 0, 2 * Math.PI);
+    ctx.fill();
+
+    // Mouth
+    ctx.beginPath();
+    ctx.arc(centerX, centerY + 10, mouthWidth, 0, Math.PI);
+    ctx.fill();
+
+    // Nose
+    ctx.fillStyle = "red";
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, 5, 0, 2 * Math.PI);
+    ctx.fill();
+}
+
+
 </script>
 
 
