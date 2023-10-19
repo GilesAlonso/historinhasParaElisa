@@ -46,9 +46,11 @@ Com seus olhos bem abertos, caçando um ratão.
 
         
 <section class="page" data-tts>
+
+
     <canvas id="canvas" width="400" height="400"></canvas>
     <input type="color" id="colorPicker" value="#000000">
-    <button id="fillButton">Fill</button>
+    <button id="fillButton" class="active">Fill</button>
     <button id="drawButton">Draw</button>
     <button id="clearButton">Clear</button>
     <script>
@@ -59,7 +61,7 @@ Com seus olhos bem abertos, caçando um ratão.
         const drawButton = document.getElementById('drawButton');
         const clearButton = document.getElementById('clearButton');
         let isDrawing = false;
-        let isFilling = false;
+        let isFilling = true;
         
         // Create an array to store shapes
         const shapes = [
@@ -132,13 +134,22 @@ Com seus olhos bem abertos, caçando um ratão.
         fillButton.addEventListener('click', () => {
             isFilling = true;
             isDrawing = false;
+            fillButton.classList.add('active');
+            drawButton.classList.remove('active');
         });
 
         drawButton.addEventListener('click', () => {
             isFilling = false;
             isDrawing = true;
+            fillButton.classList.remove('active');
+            drawButton.classList.add('active');
         });
     </script>
+
+
+
+
+    
             <div class="button-container">
                 <button class="prevButton"><span class="arrow">&#8592;</span> Página Anterior</button>
                 <button class="nextButton">Próxima Página <span class="arrow">&#8594;</span></button>
