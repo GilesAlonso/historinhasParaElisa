@@ -63,6 +63,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 textToRead += node.textContent;
             } else if (node.nodeType === Node.ELEMENT_NODE) {
+            // Check if the element has the "arrow" class and skip it.
+            if (!node.classList.contains('arrow')) {
                 let isFirstNodeInCurrentElement = true;
                 for (let child of node.childNodes) {
                     extractText(child, isFirstNodeInCurrentElement);
@@ -70,6 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         }
+    }
 
         function isButton(element) {
             return element.tagName === 'BUTTON';
