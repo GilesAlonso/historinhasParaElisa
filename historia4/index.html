@@ -48,103 +48,87 @@ Com seus olhos bem abertos, caçando um ratão.
 <section class="page" data-tts>
 
 
-    <canvas id="canvas" width="400" height="400"></canvas>
-    <input type="color" id="colorPicker" value="#000000">
-    <button id="fillButton" class="active">Fill</button>
-    <button id="drawButton">Draw</button>
-    <button id="clearButton">Clear</button>
-    <script>
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        const colorPicker = document.getElementById('colorPicker');
-        const fillButton = document.getElementById('fillButton');
-        const drawButton = document.getElementById('drawButton');
-        const clearButton = document.getElementById('clearButton');
-        let isDrawing = false;
-        let isFilling = true;
-        
-        // Create an array to store shapes
-        const shapes = [
-            { x: 100, y: 100, width: 100, height: 100, color: 'blue' },
-            { x: 200, y: 200, width: 80, height: 120, color: 'green' }
-            // Add more shapes here
-        ];
+<style>
+    canvas {
+        border: 1px solid #000;
+    }
+</style>
+<div>
+    <label for="shape">Choose a shape:</label>
+    <select id="shape">
+        <option value="rectangle">Rectangle</option>
+        <option value="circle">Circle</option>
+    </select>
+</div>
+<div>
+    <label for "mode">Mode:</label>
+    <select id="mode">
+        <option value="draw">Draw</option>
+        <option value="fill">Fill</option>
+    </select>
+</div>
+<div>
+    <label for="color">Choose a color:</label>
+    <input type="color" id="color" value="#000000">
+</div>
+<button id="clear">Clear</button>
+<canvas id="canvas" width="400" height="400"></canvas>
 
-        // Function to draw all shapes
-        function drawShapes() {
-            shapes.forEach(shape => {
-                ctx.fillStyle = shape.color;
-                ctx.fillRect(shape.x, shape.y, shape.width, shape.height);
-            });
+<script>
+    const canvas = document.getElementById("canvas");
+    const context = canvas.getContext("2d");
+    const shapeSelector = document.getElementById("shape");
+    const modeSelector = document.getElementById("mode");
+    const colorSelector = document.getElementById("color");
+    const clearButton = document.getElementById("clear");
+    let isDrawing = false;
+
+    canvas.addEventListener("mousedown", () => {
+        isDrawing = true;
+    });
+
+    canvas.addEventListener("mouseup", () => {
+        isDrawing = false;
+        context.closePath();
+    });
+
+    canvas.addEventListener("mousemove", draw);
+
+    clearButton.addEventListener("click", () => {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+    });
+
+    function draw(e) {
+        if (!isDrawing) return;
+
+        const shape = shapeSelector.value;
+        const mode = modeSelector.value;
+        const color = colorSelector.value;
+
+        context.strokeStyle = color;
+        context.fillStyle = color;
+        context.lineWidth = 2;
+
+        if (shape === "rectangle") {
+            context.beginPath();
+            context.rect(e.clientX - canvas.getBoundingClientRect().left, e.clientY - canvas.getBoundingClientRect().top, 50, 50);
+            if (mode === "draw") {
+                context.stroke();
+            } else if (mode === "fill") {
+                context.fill();
+            }
+        } else if (shape === "circle") {
+            context.beginPath();
+            context.arc(e.clientX - canvas.getBoundingClientRect().left, e.clientY - canvas.getBoundingClientRect().top, 25, 0, 2 * Math.PI);
+            if (mode === "draw") {
+                context.stroke();
+            } else if (mode === "fill") {
+                context.fill();
+            }
         }
-        drawShapes();
+    }
+</script>
 
-        // Event listener for mouse click to fill a shape or draw
-        canvas.addEventListener('click', (e) => {
-            const mouseX = e.clientX - canvas.offsetLeft;
-            const mouseY = e.clientY - canvas.offsetTop;
-            
-            if (isFilling) {
-                // Check if the click is inside any of the shapes
-                for (let i = shapes.length - 1; i >= 0; i--) {
-                    const shape = shapes[i];
-                    if (
-                        mouseX >= shape.x && mouseX <= shape.x + shape.width &&
-                        mouseY >= shape.y && mouseY <= shape.y + shape.height
-                    ) {
-                        const selectedColor = colorPicker.value;
-                        shape.color = selectedColor;
-                        ctx.clearRect(0, 0, canvas.width, canvas.height);
-                        drawShapes(); // Redraw all shapes, including the filled one
-                        break; // Exit the loop after filling one shape
-                    }
-                }
-            }
-        });
-
-        // Event listener for drawing
-        canvas.addEventListener('mousedown', (e) => {
-            isDrawing = true;
-            const mouseX = e.clientX - canvas.offsetLeft;
-            const mouseY = e.clientY - canvas.offsetTop;
-            ctx.beginPath();
-            ctx.moveTo(mouseX, mouseY);
-        });
-
-        canvas.addEventListener('mousemove', (e) => {
-            if (isDrawing && !isFilling) {
-                const mouseX = e.clientX - canvas.offsetLeft;
-                const mouseY = e.clientY - canvas.offsetTop;
-                ctx.lineTo(mouseX, mouseY);
-                ctx.stroke();
-            }
-        });
-
-        canvas.addEventListener('mouseup', () => {
-            isDrawing = false;
-        });
-
-        // Clear the canvas
-        clearButton.addEventListener('click', () => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            drawShapes(); // Redraw all shapes after clearing
-        });
-
-        // Event listeners to switch between Fill and Draw modes
-        fillButton.addEventListener('click', () => {
-            isFilling = true;
-            isDrawing = false;
-            fillButton.classList.add('active');
-            drawButton.classList.remove('active');
-        });
-
-        drawButton.addEventListener('click', () => {
-            isFilling = false;
-            isDrawing = true;
-            fillButton.classList.remove('active');
-            drawButton.classList.add('active');
-        });
-    </script>
 
 
 
