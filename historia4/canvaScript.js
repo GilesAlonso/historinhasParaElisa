@@ -58,8 +58,9 @@ canvas.addEventListener("mousedown", (e) => {
 
 canvas.addEventListener("touchstart", (e) => {
   if (selectedShape == "bucket") {
-    const x = e.offsetX;
-    const y = e.offsetY;
+    const touch = e.touches[0];
+    const x = touch.clientX - canvas.getBoundingClientRect().left;
+    const y = touch.clientY - canvas.getBoundingClientRect().top;
     const pixelColor = getPixelColor(x, y);
     fillArea(x, y, pixelColor);
   }
