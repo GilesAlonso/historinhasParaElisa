@@ -26,12 +26,12 @@ const predefinedContext = predefinedCanvas.getContext("2d");
 // Draw pre-defined shapes on the separate canvas initially
 drawPredefinedShapes(predefinedContext);
 
-canvas.addEventListener("ondblclick", clickDraw);
+
 canvas.addEventListener("mousedown", startDrawing);
 canvas.addEventListener("mouseup", stopDrawing);
 canvas.addEventListener("mousemove", draw);
 
-canvas.addEventListener("touchstart", clickDraw);
+
 canvas.addEventListener("touchstart", startDrawing);
 canvas.addEventListener("touchend", stopDrawing);
 canvas.addEventListener("touchmove", draw);
@@ -56,6 +56,15 @@ canvas.addEventListener("mousedown", (e) => {
   }
 });
 
+canvas.addEventListener("touchstart", (e) => {
+  if (selectedShape == "bucket") {
+    const x = e.offsetX;
+    const y = e.offsetY;
+    const pixelColor = getPixelColor(x, y);
+    fillArea(x, y, pixelColor);
+  }
+});
+
 
 function getPixelColor(x, y) {
   const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
@@ -70,30 +79,35 @@ function getPixelColor(x, y) {
 
 function fillArea(x, y, targetColor) {
   const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-  const stack = [{ x, y }];
+  const pixelStack = [{x, y}];
 
-  while (stack.length > 0) {
-    const current = stack.pop();
-    const { x, y } = current;
+  const fillColor = hexToRgb(selectedColor);
+  const targetColorStr = targetColor.toString();
 
-    if (x >= 0 && x < canvas.width && y >= 0 && y < canvas.height) {
+  while (pixelStack.length) {
+    const currentPixel = pixelStack.pop();
+    const {x, y} = currentPixel;
+
+    if (
+      x >= 0 && x < canvas.width &&
+      y >= 0 && y < canvas.height
+    ) {
       const index = (x + y * canvas.width) * 4;
-
-      if (
-        imageData.data[index] === targetColor.r &&
-        imageData.data[index + 1] === targetColor.g &&
-        imageData.data[index + 2] === targetColor.b &&
-        imageData.data[index + 3] === targetColor.a
-      ) {
-        imageData.data[index] = hexToR(selectedColor);
-        imageData.data[index + 1] = hexToG(selectedColor);
-        imageData.data[index + 2] = hexToB(selectedColor);
+      if (imageData.data[index] === targetColor.r &&
+          imageData.data[index + 1] === targetColor.g &&
+          imageData.data[index + 2] === targetColor.b &&
+          imageData.data[index + 3] === targetColor.a) {
+        // Fill the current pixel with the fill color
+        imageData.data[index] = fillColor.r;
+        imageData.data[index + 1] = fillColor.g;
+        imageData.data[index + 2] = fillColor.b;
         imageData.data[index + 3] = 255;
 
-        stack.push({ x: x + 1, y });
-        stack.push({ x: x - 1, y });
-        stack.push({ x, y: y + 1 });
-        stack.push({ x, y: y - 1 });
+        // Add adjacent pixels to the stack for further processing
+        pixelStack.push({x: x + 1, y});
+        pixelStack.push({x: x - 1, y});
+        pixelStack.push({x, y: y + 1});
+        pixelStack.push({x, y: y - 1});
       }
     }
   }
@@ -101,17 +115,14 @@ function fillArea(x, y, targetColor) {
   context.putImageData(imageData, 0, 0);
 }
 
-function hexToR(hex) {
-  return parseInt(hex.slice(1, 3), 16);
+function hexToRgb(hex) {
+  const bigint = parseInt(hex.slice(1), 16);
+  const r = (bigint >> 16) & 255;
+  const g = (bigint >> 8) & 255;
+  const b = bigint & 255;
+  return { r, g, b };
 }
 
-function hexToG(hex) {
-  return parseInt(hex.slice(3, 5), 16);
-}
-
-function hexToB(hex) {
-  return parseInt(hex.slice(5, 7), 16);
-}
 
 //End of Bucket function
 
