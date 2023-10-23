@@ -31,14 +31,14 @@ canvas.addEventListener("mousedown", startDrawing);
 canvas.addEventListener("mouseup", stopDrawing);
 canvas.addEventListener("mousemove", draw);
 
-
+canvas.addEventListener('touchstart', handleCanvasTouch);
 canvas.addEventListener("touchstart", startDrawing);
 canvas.addEventListener("touchend", stopDrawing);
 canvas.addEventListener("touchmove", draw);
 
 clearButton.addEventListener("click", clearCanvas);
 
-canvas.addEventListener('touchstart', handleCanvasTouch);
+
 
 
 //Bucket function !!!!
