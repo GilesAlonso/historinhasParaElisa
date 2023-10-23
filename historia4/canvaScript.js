@@ -73,13 +73,13 @@ let isFilling = false; // Track if we are currently filling
 canvas.addEventListener("touchstart", (e) => {
   if (selectedShape == "bucket") {
     e.preventDefault();
-    isFilling = true;
     const touch = e.touches[0];
     const rect = canvas.getBoundingClientRect();
     const scrollX = window.scrollX || window.pageXOffset;
     const scrollY = window.scrollY || window.pageYOffset;
     const x = touch.clientX - rect.left - scrollX + 1; // Add 1 to x
     const y = touch.clientY - rect.top - scrollY + 1;  // Add 1 to y
+    console.log(`Touch - x: ${x}, y: ${y}`);
     const pixelColor = getPixelColor(x, y);
     fillArea(x, y, pixelColor);
   }
