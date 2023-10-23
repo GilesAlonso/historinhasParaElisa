@@ -1,10 +1,13 @@
 const canvas = document.getElementById("canvas");
+canvas.willReadFrequently = true;
 const context = canvas.getContext("2d");
+context.willReadFrequently = true;
 const shapeSelector = document.getElementById("shape");
 const sizeSelector = document.getElementById("size");
 const modeSelector = document.getElementById("mode");
 const colorSelector = document.getElementById("color");
 const clearButton = document.getElementById("clear");
+let selectedShape = "pencil"
 
 const bucketShape = shapeSelector.value;
 shapeSelector.addEventListener("change", () => {
@@ -17,8 +20,15 @@ let isDrawing = false;
 let lastX = 0;
 let lastY = 0;
 
+
+
+
+
+
+
 // Separate canvas for pre-defined shapes
 const predefinedCanvas = document.createElement("canvas");
+predefinedCanvas.willReadFrequently = true;
 predefinedCanvas.width = canvas.width;
 predefinedCanvas.height = canvas.height;
 const predefinedContext = predefinedCanvas.getContext("2d");
@@ -29,22 +39,6 @@ drawPredefinedShapes(predefinedContext);
 canvas.addEventListener("mousedown", startDrawing);
 canvas.addEventListener("mouseup", stopDrawing);
 canvas.addEventListener("mousemove", draw);
-
-
-canvas.addEventListener("touchstart", (e) => {
-  if (selectedShape == "bucket") {
-    e.preventDefault();
-    const touch = e.touches[0];
-    const rect = canvas.getBoundingClientRect();
-    const scrollX = window.scrollX || window.pageXOffset;
-    const scrollY = window.scrollY || window.pageYOffset;
-    const x = touch.clientX - rect.left - scrollX;
-    const y = touch.clientY - rect.top - scrollY;
-    const pixelColor = getPixelColor(x, y);
-    fillArea(x, y, pixelColor);
-  }
-});
-
 
 
 canvas.addEventListener("touchstart", startDrawing);
@@ -68,40 +62,19 @@ canvas.addEventListener("mousedown", (e) => {
   }
 });
 
+// Add touch event listeners for the bucket tool
+canvas.addEventListener("touchstart", (e) => {
+  e.preventDefault(); // Prevent scrolling on touch devices
+  if (selectedShape === "bucket") {
+    const [x, y] = getTouchCoordinates(e);
+    const pixelColor = getPixelColor(x, y);
+    fillArea(x, y, pixelColor);
+  }
+});
+
+
 let isFilling = false; // Track if we are currently filling
 
-canvas.addEventListener("touchstart", (e) => {
-  if (selectedShape == "bucket") {
-    e.preventDefault();
-    const touch = e.touches[0];
-    const rect = canvas.getBoundingClientRect();
-    const scrollX = window.scrollX || window.pageXOffset;
-    const scrollY = window.scrollY || window.pageYOffset;
-    const x = touch.clientX - rect.left - scrollX + 1; // Add 1 to x
-    const y = touch.clientY - rect.top - scrollY + 1;  // Add 1 to y
-    console.log(`Touch - x: ${x}, y: ${y}`);
-    const pixelColor = getPixelColor(x, y);
-    fillArea(x, y, pixelColor);
-  }
-});
-
-canvas.addEventListener("touchmove", (e) => {
-  if (isFilling && selectedShape == "bucket") {
-    e.preventDefault();
-    const touch = e.touches[0];
-    const rect = canvas.getBoundingClientRect();
-    const scrollX = window.scrollX || window.pageXOffset;
-    const scrollY = window.scrollY || window.pageYOffset;
-    const x = touch.clientX - rect.left - scrollX + 1; // Add 1 to x
-    const y = touch.clientY - rect.top - scrollY + 1;  // Add 1 to y
-    const pixelColor = getPixelColor(x, y);
-    fillArea(x, y, pixelColor);
-  }
-});
-
-canvas.addEventListener("touchend", () => {
-  isFilling = false; // Stop filling when the touch ends
-});
 
 
 function getPixelColor(x, y) {
@@ -117,6 +90,7 @@ function getPixelColor(x, y) {
 
 function fillArea(x, y, targetColor) {
   const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+  imageData.willReadFrequently = true
   const fillColor = hexToRgb(selectedColor);
 
   const stack = [{ x, y }];
@@ -151,44 +125,7 @@ function fillArea(x, y, targetColor) {
   context.putImageData(imageData, 0, 0);
 }
 
-function fillAreaMobile(x, y, targetColor) {
-  const canvas = document.getElementById("canvas");
-  const context = canvas.getContext("2d");
-  const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-  const fillColor = hexToRgb(selectedColor);
 
-  const maxX = canvas.width;
-  const maxY = canvas.height;
-
-  const stack = [{ x, y }];
-
-  while (stack.length > 0) {
-    const { x, y } = stack.pop();
-
-    if (x >= 0 && x < maxX && y >= 0 && y < maxY) {
-      const index = (x + y * maxX) * 4;
-
-      if (
-        imageData.data[index] === targetColor.r &&
-        imageData.data[index + 1] === targetColor.g &&
-        imageData.data[index + 2] === targetColor.b &&
-        imageData.data[index + 3] === targetColor.a
-      ) {
-        imageData.data[index] = fillColor.r;
-        imageData.data[index + 1] = fillColor.g;
-        imageData.data[index + 2] = fillColor.b;
-        imageData.data[index + 3] = 255;
-
-        stack.push({ x: x + 1, y });
-        stack.push({ x: x - 1, y });
-        stack.push({ x, y: y + 1 });
-        stack.push({ x, y: y - 1 });
-      }
-    }
-  }
-
-  context.putImageData(imageData, 0, 0);
-}
 
 function hexToRgb(hex) {
   const bigint = parseInt(hex.slice(1), 16);
@@ -247,10 +184,10 @@ function clickDraw(e) {
 }
 
 function startDrawing(e) {
-    e.preventDefault();
-    isDrawing = true;
-    const [x, y] = getCoordinates(e);
-    [lastX, lastY] = [x, y];
+  e.preventDefault();
+  isDrawing = true;
+  const [x, y] = getCoordinates(e);
+  [lastX, lastY] = [x, y];
 }
 
 function stopDrawing() {
@@ -386,6 +323,7 @@ function clearCanvas() {
   context.drawImage(predefinedCanvas, 0, 0);
 }
 
+// Modify the getCoordinates function to handle both mouse and touch events
 function getCoordinates(e) {
   let x, y;
   if (e.changedTouches) {
@@ -395,6 +333,14 @@ function getCoordinates(e) {
     x = e.clientX - canvas.getBoundingClientRect().left;
     y = e.clientY - canvas.getBoundingClientRect().top;
   }
+  return [x, y];
+}
+
+// Function to get touch coordinates
+function getTouchCoordinates(e) {
+  const touch = e.touches[0];
+  const x = touch.pageX;
+  const y = touch.pageY;
   return [x, y];
 }
 
