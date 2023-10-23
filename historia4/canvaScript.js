@@ -75,8 +75,8 @@ canvas.addEventListener("touchstart", (e) => {
     const rect = canvas.getBoundingClientRect();
     const scrollX = window.scrollX || window.pageXOffset;
     const scrollY = window.scrollY || window.pageYOffset;
-    const x = touch.clientX - rect.left - scrollX;
-    const y = touch.clientY - rect.top - scrollY;
+    const x = touch.clientX - rect.left - scrollX + 1; // Add 1 to x
+    const y = touch.clientY - rect.top - scrollY + 1;  // Add 1 to y
     const pixelColor = getPixelColor(x, y);
     fillArea(x, y, pixelColor);
   }
