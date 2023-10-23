@@ -38,6 +38,9 @@ canvas.addEventListener("touchmove", draw);
 
 clearButton.addEventListener("click", clearCanvas);
 
+canvas.addEventListener('touchstart', handleCanvasTouch);
+
+
 //Bucket function !!!!
 let selectedColor = colorSelector.value; // Initialize with the default color
 colorSelector.addEventListener("change", () => {
@@ -56,16 +59,16 @@ canvas.addEventListener("mousedown", (e) => {
   }
 });
 
-canvas.addEventListener("touchstart", (e) => {
+function handleCanvasTouch(e) {
+  e.preventDefault(); // Prevent default behavior (e.g., scrolling)
   if (selectedShape == "bucket") {
     const touch = e.touches[0];
-    const rect = canvas.getBoundingClientRect();
-    const x = touch.clientX - rect.left;
-    const y = touch.clientY - rect.top;
+    const x = touch.clientX - canvas.getBoundingClientRect().left;
+    const y = touch.clientY - canvas.getBoundingClientRect().top;
     const pixelColor = getPixelColor(x, y);
     fillArea(x, y, pixelColor);
   }
-});
+}
 
 
 function getPixelColor(x, y) {
