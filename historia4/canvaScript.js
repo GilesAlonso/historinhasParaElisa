@@ -84,41 +84,40 @@ function getPixelColor(x, y) {
 
 function fillArea(x, y, targetColor) {
   const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-  const pixelStack = [{x, y}];
-
   const fillColor = hexToRgb(selectedColor);
-  const targetColorStr = targetColor.toString();
 
-  while (pixelStack.length) {
-    const currentPixel = pixelStack.pop();
-    const {x, y} = currentPixel;
+  const stack = [{ x, y }];
+  const maxX = canvas.width;
+  const maxY = canvas.height;
 
-    if (
-      x >= 0 && x < canvas.width &&
-      y >= 0 && y < canvas.height
-    ) {
-      const index = (x + y * canvas.width) * 4;
-      if (imageData.data[index] === targetColor.r &&
-          imageData.data[index + 1] === targetColor.g &&
-          imageData.data[index + 2] === targetColor.b &&
-          imageData.data[index + 3] === targetColor.a) {
-        // Fill the current pixel with the fill color
+  while (stack.length > 0) {
+    const { x, y } = stack.pop();
+
+    if (x >= 0 && x < maxX && y >= 0 && y < maxY) {
+      const index = (x + y * maxX) * 4;
+
+      if (
+        imageData.data[index] === targetColor.r &&
+        imageData.data[index + 1] === targetColor.g &&
+        imageData.data[index + 2] === targetColor.b &&
+        imageData.data[index + 3] === targetColor.a
+      ) {
         imageData.data[index] = fillColor.r;
         imageData.data[index + 1] = fillColor.g;
         imageData.data[index + 2] = fillColor.b;
         imageData.data[index + 3] = 255;
 
-        // Add adjacent pixels to the stack for further processing
-        pixelStack.push({x: x + 1, y});
-        pixelStack.push({x: x - 1, y});
-        pixelStack.push({x, y: y + 1});
-        pixelStack.push({x, y: y - 1});
+        stack.push({ x: x + 1, y });
+        stack.push({ x: x - 1, y });
+        stack.push({ x, y: y + 1 });
+        stack.push({ x, y: y - 1 });
       }
     }
   }
 
   context.putImageData(imageData, 0, 0);
 }
+
 
 function hexToRgb(hex) {
   const bigint = parseInt(hex.slice(1), 16);
