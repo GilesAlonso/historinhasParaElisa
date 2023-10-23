@@ -7,7 +7,7 @@ const sizeSelector = document.getElementById("size");
 const modeSelector = document.getElementById("mode");
 const colorSelector = document.getElementById("color");
 const clearButton = document.getElementById("clear");
-let selectedShape = "pencil"
+let selectedShape = "pencil";
 
 const bucketShape = shapeSelector.value;
 shapeSelector.addEventListener("change", () => {
@@ -19,12 +19,6 @@ let isBucketToolActive = false;
 let isDrawing = false;
 let lastX = 0;
 let lastY = 0;
-
-
-
-
-
-
 
 // Separate canvas for pre-defined shapes
 const predefinedCanvas = document.createElement("canvas");
@@ -40,7 +34,6 @@ canvas.addEventListener("mousedown", startDrawing);
 canvas.addEventListener("mouseup", stopDrawing);
 canvas.addEventListener("mousemove", draw);
 
-
 canvas.addEventListener("touchstart", startDrawing);
 canvas.addEventListener("touchend", stopDrawing);
 canvas.addEventListener("touchmove", draw);
@@ -51,6 +44,7 @@ clearButton.addEventListener("click", clearCanvas);
 let selectedColor = colorSelector.value; // Initialize with the default color
 colorSelector.addEventListener("change", () => {
   selectedColor = colorSelector.value;
+  console.log(hexToRgb(selectedColor))
 });
 
 canvas.addEventListener("mousedown", (e) => {
@@ -72,10 +66,7 @@ canvas.addEventListener("touchstart", (e) => {
   }
 });
 
-
 let isFilling = false; // Track if we are currently filling
-
-
 
 function getPixelColor(x, y) {
   const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
@@ -90,8 +81,11 @@ function getPixelColor(x, y) {
 
 function fillArea(x, y, targetColor) {
   const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-  imageData.willReadFrequently = true
+  imageData.willReadFrequently = true;
   const fillColor = hexToRgb(selectedColor);
+  console.log("targetColor: ")
+  console.log(targetColor)
+
 
   const stack = [{ x, y }];
   const maxX = canvas.width;
@@ -102,7 +96,6 @@ function fillArea(x, y, targetColor) {
 
     if (x >= 0 && x < maxX && y >= 0 && y < maxY) {
       const index = (x + y * maxX) * 4;
-
       if (
         imageData.data[index] === targetColor.r &&
         imageData.data[index + 1] === targetColor.g &&
@@ -124,8 +117,6 @@ function fillArea(x, y, targetColor) {
 
   context.putImageData(imageData, 0, 0);
 }
-
-
 
 function hexToRgb(hex) {
   const bigint = parseInt(hex.slice(1), 16);
@@ -336,13 +327,20 @@ function getCoordinates(e) {
   return [x, y];
 }
 
+
 // Function to get touch coordinates
 function getTouchCoordinates(e) {
   const touch = e.touches[0];
-  const x = touch.pageX;
-  const y = touch.pageY;
+
+
+  const x = touch.pageX - canvas.getBoundingClientRect().left;
+  const y = touch.pageY - canvas.getBoundingClientRect().top;
+  console.log("X value: " + x + " Y value: " + y)
   return [x, y];
+
 }
+
+
 
 // Function to draw pre-defined shapes on a separate canvas
 function drawPredefinedShapes(ctx) {
