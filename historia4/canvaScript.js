@@ -126,7 +126,7 @@ function fillArea(x, y, targetColor) {
 
 
 function fillAreaMobile(x, y, targetColor) {
-  const canvas = document.getElementById('myCanvas');
+  const canvas = document.getElementById('canvas');
   const context = canvas.getContext('2d');
   const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
   const fillColor = hexToRgb(selectedColor);
