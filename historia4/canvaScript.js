@@ -72,7 +72,7 @@ function handleCanvasTouch(e) {
     y -= 1;
 
     const pixelColor = getPixelColor(x, y);
-    fillArea(x, y, pixelColor);
+    fillAreaMobile(x, y, pixelColor);
   }
 }
 
@@ -123,6 +123,52 @@ function fillArea(x, y, targetColor) {
 
   context.putImageData(imageData, 0, 0);
 }
+
+
+function fillAreaMobile(x, y, targetColor) {
+  const canvas = document.getElementById('myCanvas');
+  const context = canvas.getContext('2d');
+  const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+  const fillColor = hexToRgb(selectedColor);
+
+  const maxX = canvas.width;
+  const maxY = canvas.height;
+
+  const stack = [{ x, y }];
+
+  while (stack.length > 0) {
+    const { x, y } = stack.pop();
+
+    if (x >= 0 && x < maxX && y >= 0 && y < maxY) {
+      const index = (x + y * maxX) * 4;
+
+      if (
+        imageData.data[index] === targetColor.r &&
+        imageData.data[index + 1] === targetColor.g &&
+        imageData.data[index + 2] === targetColor.b &&
+        imageData.data[index + 3] === targetColor.a
+      ) {
+        imageData.data[index] = fillColor.r;
+        imageData.data[index + 1] = fillColor.g;
+        imageData.data[index + 2] = fillColor.b;
+        imageData.data[index + 3] = 255;
+
+        stack.push({ x: x + 1, y });
+        stack.push({ x: x - 1, y });
+        stack.push({ x, y: y + 1 });
+        stack.push({ x, y: y - 1 });
+      }
+    }
+  }
+
+  context.putImageData(imageData, 0, 0);
+}
+
+
+
+
+
+
 
 
 function hexToRgb(hex) {
