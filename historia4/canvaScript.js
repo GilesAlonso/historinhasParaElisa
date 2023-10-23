@@ -63,8 +63,14 @@ function handleCanvasTouch(e) {
   e.preventDefault(); // Prevent default behavior (e.g., scrolling)
   if (selectedShape == "bucket") {
     const touch = e.touches[0];
-    const x = touch.clientX - canvas.getBoundingClientRect().left;
-    const y = touch.clientY - canvas.getBoundingClientRect().top;
+    const rect = canvas.getBoundingClientRect();
+    const x = touch.clientX - rect.left;
+    const y = touch.clientY - rect.top;
+
+    // Displace the touch coordinates by one pixel down and to the left
+    x -= 1;
+    y -= 1;
+
     const pixelColor = getPixelColor(x, y);
     fillArea(x, y, pixelColor);
   }
