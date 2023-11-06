@@ -7,3 +7,6 @@ Ao colar o texto da aba HTML em uma página no VSCode, substituir aspas duplas p
 
 (Guardado para uso posterior
 https://webdesign.tutsplus.com/21-ridiculously-impressive-html5-canvas-experiments--net-14210a)
+
+
+biblioteca virtual: https://www.baixelivros.com.br/acervo/criancas-de-3-a-5-anos/page/8
